@@ -1,3 +1,3 @@
-# ex-mongoose
+# modelist
 
 Automagically generate Backbone-compatible RESTful API from Mongoose models.
