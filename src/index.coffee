@@ -1,48 +1,58 @@
 mongoose = require 'mongoose'
 
-module.exports = (name, schema = {}) ->
-  lower = name.toLowerCase()
-  upper = name.charAt(0).toUpperCase() + lower.substr 1
-
+# Generate routes for a mongoose model
+createRoutes = (Model) ->
   # pluralize lowerCase
-  plural = lower
+  plural = Model.modelName.toLowerCase()
   if plural.charAt(plural.length-1) != 's'
     plural += 's'
 
-  _Model = new mongoose.Schema schema
-
-  Model = mongoose.model upper, _Model
-  Model.routes = ->
-    # Generate Restful API
-
+  ->
     # Create
     @post "/api/#{plural}", ->
-      instance = @body
-      new Model(model).save (err) =>
+      doc = new Model(@body).save (err) =>
         if not err
-          @json model, 201
+          @json doc, 201
 
     # List
     @get "/api/#{plural}", ->
-      Model.find {}, (err, model) =>
-        @json model
+      Model.find {}, (err, docs) =>
+        @json docs
 
     # Get individual
     @get "/api/#{plural}/:id", (id) ->
-      Model.findOne {id: id}, (err, model) =>
-        @json model
+      id ?= req.params.id
+      Model.findOne {_id: id}, (err, doc) =>
+        @json doc
 
     # Update
     @put "/api/#{plural}/:id", (id) ->
-      model = @body
-      Model.update {id: id}, model, {}, (err, num) =>
+      id ?= req.params.id
+      Model.update {_id: id}, @body, {}, (err, num) =>
         @json (if err then 404 else 200)
 
     # Delete
     @del "/api/#{plural}/:id", (id) ->
-      Model.findOne {id: id}, (err, model) =>
+      id ?= req.params.id
+      Model.findOne {_id: id}, (err, doc) =>
         if not err
-          model.remove()
+          doc.remove()
         @json (if err then 404 else 204)
 
+createModel = (name, schema = {}, schemaOpts = {}) ->
+  lower = name.toLowerCase()
+  upper = name.charAt(0).toUpperCase() + lower.substr 1
+
+  Schema = new mongoose.Schema schema, schemaOpts
+  Model = mongoose.model upper, Schema
+  Model.routes = createRoutes Model
   Model
+
+wrapper = createModel
+wrapper.createRoutes = createRoutes
+wrapper.connect = -> mongoose.connect.apply mongoose, arguments
+wrapper.model = -> mongoose.model.apply mongoose, arguments
+wrapper.Schema = mongoose.Schema
+wrapper.ObjectId = mongoose.Schema.ObjectId
+
+module.exports = wrapper
