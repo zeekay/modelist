@@ -8,9 +8,12 @@ createRoutes = (Model) ->
     plural += 's'
 
   ->
+    @use @middleware.bodyParser()
+
     # Create
     @post "/api/#{plural}", ->
-      doc = new Model(@body).save (err) =>
+      doc = new Model @body
+      doc.save (err) =>
         if not err
           @json doc, 201
 
