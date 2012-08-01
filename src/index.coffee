@@ -16,6 +16,10 @@ createRoutes = (Model) ->
       doc.save (err) =>
         if not err
           @json doc, 201
+        else if err.code == 11000
+          @json doc, 202
+        else
+          @json 500
 
     # List
     @get "/api/#{plural}", ->
