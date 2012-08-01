@@ -52,10 +52,15 @@ createModel = (name, schema = {}, schemaOpts = {}) ->
   Model
 
 wrapper = createModel
+wrapper.createModel = createModel
 wrapper.createRoutes = createRoutes
 wrapper.connect = -> mongoose.connect.apply mongoose, arguments
 wrapper.model = -> mongoose.model.apply mongoose, arguments
 wrapper.Schema = mongoose.Schema
 wrapper.ObjectId = mongoose.Schema.ObjectId
+
+Object.defineProperty wrapper, 'connection',
+  get: -> mongoose.connection
+  enumerable: true
 
 module.exports = wrapper
