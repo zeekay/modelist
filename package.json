@@ -8,7 +8,7 @@
     "mongoose",
     "mongodb",
     "backbone"
-  ]
+  ],
   "homepage": "http://github.com/zeekay/modelist",
   "bugs": {
     "url": "http://github.com/zeekay/modelist/issues"
