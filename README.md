@@ -1,3 +1,3 @@
 # modelist
 
-Automagically generate Backbone-compatible RESTful API from Mongoose models.
+Automagically generate Backbone routes from Mongoose models.
