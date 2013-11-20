@@ -1,6 +1,6 @@
 {
   "name": "modelist",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "lib/",
   "author": "Zach Kelling <zk@monoid.io> (http://zeekay.io)",
   "description": "Automagically generate Backbone routes from Mongoose models.",
